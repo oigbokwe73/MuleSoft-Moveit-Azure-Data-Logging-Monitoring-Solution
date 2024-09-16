@@ -101,11 +101,8 @@ This detailed sequence diagram provides a comprehensive overview of the entire w
 
 This architecture provides a scalable, secure, and efficient solution for log management, processing, and reporting in an Azure environment. 
 
-### Implementation Steps 
 
-Sure! I'll expand on each step to provide detailed setup instructions and a more comprehensive breakdown. Each step will include specific configuration instructions for setting up Azure resources and functions, as well as the expanded Mermaid sequence diagrams for clarity.
-
-### Step-by-Step Instructions and Expanded Mermaid Diagrams
+### Implementation Steps with supported Mermaid Diagrams
 
 ---
 
