@@ -1,5 +1,5 @@
 
-### Moveit to Azure File Share for Data storage to capture logs Monitoring and reporting in PBI
+### Moveit to Azure File Share for Data storage to capture logs for Monitoring and Reporting in PBI
 
 1. **MoveIt Transfer Task to SFTP: Upload MuleSoft Logs**
    - **Details**: MoveIt Transfer Task is responsible for securely transferring MuleSoft logs to the SFTP server. 
