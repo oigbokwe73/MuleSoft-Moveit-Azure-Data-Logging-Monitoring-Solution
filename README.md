@@ -1,5 +1,5 @@
 
-### Expanded Workflow Steps
+### Moveit to Azure File Share for Data storage to capture logs Monitoring and reporting in PBI
 
 1. **MoveIt Transfer Task to SFTP: Upload MuleSoft Logs**
    - **Details**: MoveIt Transfer Task is responsible for securely transferring MuleSoft logs to the SFTP server. 
@@ -185,26 +185,6 @@ sequenceDiagram
 4. **Deploy and Test the Function**:
    - Deploy the function and test to ensure it correctly copies files from the file share to blob storage.
 
-#### Sample Code (Python):
-```python
-import os
-from azure.storage.file import FileService
-from azure.storage.blob import BlobServiceClient
-
-def main(mytimer: func.TimerRequest) -> None:
-    file_service = FileService(account_name='your_account_name', account_key='your_account_key')
-    blob_service_client = BlobServiceClient.from_connection_string('your_connection_string')
-
-    # List files in Azure File Share
-    files = file_service.list_directories_and_files('mulesoft-logs')
-    for file in files:
-        file_content = file_service.get_file_to_text('mulesoft-logs', None, file.name).content
-
-        # Upload to Azure Blob
-        blob_client = blob_service_client.get_blob_client(container='logs-container', blob=file.name)
-        blob_client.upload_blob(file_content)
-```
-
 #### Expanded Mermaid Diagram:
 ```mermaid
 sequenceDiagram
@@ -234,23 +214,6 @@ sequenceDiagram
 3. **Deploy and Test the Function**:
    - Deploy the function and test by uploading a log file to the blob container to ensure it triggers correctly and publishes to Service Bus or Event Hub.
 
-#### Sample Code (Python):
-```python
-import logging
-from azure.servicebus import ServiceBusClient, ServiceBusMessage
-
-def main(myblob: func.InputStream):
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str="your_service_bus_connection_string")
-    sender = servicebus_client.get_queue_sender(queue_name="your_queue_name")
-    
-    # Parse the log file
-    log_content = myblob.read().decode('utf-8')
-    parsed_data = parse_log(log_content)  # Custom log parsing logic
-
-    # Send parsed data to Service Bus
-    message = ServiceBusMessage(parsed_data)
-    sender.send_messages(message)
-```
 
 #### Expanded Mermaid Diagram:
 ```mermaid
@@ -281,22 +244,6 @@ sequenceDiagram
 3. **Deploy and Test the Function**:
    - Deploy the function and test by sending data through Service Bus or Event Hub to ensure it processes and writes correctly to the database.
 
-#### Sample Code (Python):
-```python
-import pyodbc
-
-def main(event: func.EventHubEvent):
-    # Connect to Azure SQL Database
-    conn = pyodbc.connect("Driver={ODBC Driver 17 for SQL Server};Server=tcp:your_server.database.windows.net;Database=your_db;Uid=your_user;Pwd=your_password;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;")
-    cursor = conn.cursor()
-
-    # Process the incoming data
-    data = event.get_body().decode('utf-8')
-    
-    # Insert data into Azure SQL Database
-    cursor.execute("INSERT INTO LogsTable (LogData) VALUES (?)", data)
-    conn.commit()
-```
 
 #### Expanded Mermaid Diagram:
 ```mermaid
