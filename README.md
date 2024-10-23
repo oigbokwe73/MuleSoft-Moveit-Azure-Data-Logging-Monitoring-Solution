@@ -1,3 +1,61 @@
+Below is a detailed table showing the **Data Source**, **Table/Entity**, **Metric**, **Field/Column Name**, and a brief **Description** for each of the key categories:
+
+---
+
+### **Application Performance Metrics**
+
+| **Data Source**           | **Table/Entity**     | **Metric**                   | **Field/Column Name**        | **Description**                                                                 |
+|---------------------------|----------------------|------------------------------|------------------------------|---------------------------------------------------------------------------------|
+| Azure Application Insights | AppPerformanceLogs   | Service Availability (%)      | ServiceAvailability           | Percentage of application uptime in a given time period.                        |
+| Azure Application Insights | AppPerformanceLogs   | Application Response Time (ms)| AppResponseTime               | Time taken by the application to respond to user requests.                      |
+| Azure API Management       | APILogs              | API Latency (ms)              | APILatency                    | Time taken for API calls to be processed and returned.                          |
+| Azure SQL Database         | TransactionLogs      | Transaction Throughput        | TransactionCount              | Number of successful business transactions processed per minute.                |
+| Azure Log Analytics        | ErrorLogs            | Error Rate (%)                | ErrorRate                     | Percentage of application requests that result in errors or exceptions.         |
+
+---
+
+### **Cloud Infrastructure and Network Metrics**
+
+| **Data Source**           | **Table/Entity**        | **Metric**                    | **Field/Column Name**         | **Description**                                                                 |
+|---------------------------|-------------------------|-------------------------------|-------------------------------|---------------------------------------------------------------------------------|
+| Azure Monitor              | VMPerformanceLogs       | CPU Utilization (%)            | CPUUsage                      | Percentage of CPU usage on virtual machines hosting MES applications.           |
+| Azure Monitor              | VMPerformanceLogs       | Memory Utilization (MB)        | MemoryUsage                   | Amount of memory (in MB) used on cloud virtual machines.                        |
+| Azure Storage              | DiskIOLogs              | Disk I/O Read (MBps)           | DiskIORead                    | Speed of disk read operations on cloud storage (MB per second).                 |
+| Azure Storage              | DiskIOLogs              | Disk I/O Write (MBps)          | DiskIOWrite                   | Speed of disk write operations on cloud storage (MB per second).                |
+| Azure Network Watcher      | NetworkPerformanceLogs  | Network Bandwidth Utilization (%)| NetworkBandwidthUsage         | Percentage of network bandwidth being utilized by MES components.               |
+
+---
+
+### **Security Monitoring Metrics**
+
+| **Data Source**           | **Table/Entity**        | **Metric**                    | **Field/Column Name**         | **Description**                                                                 |
+|---------------------------|-------------------------|-------------------------------|-------------------------------|---------------------------------------------------------------------------------|
+| Azure Active Directory     | AuthenticationLogs      | Failed Login Attempts          | FailedLogins                  | Number of failed user authentication attempts in MES applications.              |
+| Azure Sentinel             | SecurityEventLogs       | Security Threat Detections     | ThreatDetections               | Number of detected security threats, such as suspicious sign-ins or malware.    |
+| Azure Compliance Center    | ComplianceLogs          | Compliance Violations          | ComplianceViolations           | Instances where system policies were violated, such as data encryption failure. |
+| Azure Security Center      | VulnerabilityScanLogs   | Vulnerability Scan Results     | VulnerabilityResults           | Critical vulnerabilities found during scans of the cloud infrastructure.        |
+| Azure Active Directory     | MFAUsageLogs            | MFA Enforcement Rate (%)       | MFAEnforcementRate             | Percentage of users who successfully completed multi-factor authentication.     |
+
+---
+
+### **Advanced Analytics & Machine Learning Metrics**
+
+| **Data Source**           | **Table/Entity**        | **Metric**                    | **Field/Column Name**         | **Description**                                                                 |
+|---------------------------|-------------------------|-------------------------------|-------------------------------|---------------------------------------------------------------------------------|
+| Azure Machine Learning     | AnomalyDetectionLogs    | Anomalous Behavior Detections  | AnomalousBehaviorDetections    | Instances of anomalous behavior detected in MES systems using machine learning. |
+| Azure Machine Learning     | FailurePredictionLogs   | Predicted System Failures      | PredictedFailures              | Predicted failures of MES infrastructure or applications based on past trends.  |
+| Azure Machine Learning     | CrashPredictionLogs     | Application Crash Prediction (%)| CrashPrediction                | Probability of an application crash occurring based on system behavior trends.  |
+
+---
+
+### **Summary**:
+
+This table provides detailed insights into the different metrics that are key to monitoring application performance, infrastructure health, security events, and predictive analytics. Each metric is tied to a specific **Data Source** (e.g., **Azure Monitor**, **Azure Sentinel**, **Azure Application Insights**) and **Table/Entity** where the data is stored, with descriptions explaining what each metric monitors and how it contributes to system health.
+
+These metrics can be used in Power BI dashboards or any other monitoring platform to ensure that the **MES** environment operates effectively and securely.
+
+
+
 ### Expanded Conceptual Overview of MoveIt with Power BI Reporting
 
 This expanded conceptual design of **MoveIt** includes file transfers, logging, user authentication, health monitoring, and the integration of real-time reporting to **Power BI** for analytical insights. The key focus areas are secure file transfers, comprehensive logging, user authentication, system health, and centralized reporting in **Power BI**.
