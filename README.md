@@ -1,3 +1,27 @@
+Here’s a **Mermaid diagram** to represent the integration process between **ServiceNow, Power BI**, and additional data sources for visualizing metrics.
+
+```mermaid
+graph TD
+    A[ServiceNow] -->|REST API Integration| B[Power BI Desktop]
+    B -->|Data Transformation| C[Power Query Editor]
+    C -->|Build Reports & Dashboards| D[Power BI Service]
+    D -->|Scheduled Data Refresh| E[ServiceNow API]
+    D -->|Interactive Dashboards| F[IT Teams & Stakeholders]
+    D -->|Combined Data Sources| G[Azure Monitor/Log Analytics]
+    G -->|Correlated Insights| D
+```
+
+### **Explanation of the Diagram**
+
+1. **ServiceNow**: Acts as the primary data source, providing ITSM data (e.g., incidents, SLAs, and requests) through its REST API.
+2. **Power BI Desktop**: Connects to ServiceNow, retrieves data, and uses Power Query Editor for transformations.
+3. **Power Query Editor**: Prepares the data by filtering, renaming, and creating calculated columns.
+4. **Power BI Service**: Publishes the transformed data and dashboards for collaboration.
+5. **IT Teams & Stakeholders**: Access interactive dashboards to monitor performance and trends.
+6. **Azure Monitor/Log Analytics**: Additional integration for combining infrastructure data with ServiceNow metrics for deeper analysis.
+
+This diagram visually represents the data flow and the relationships between components in the integration.
+
 ### **Purpose of ServiceNow Integration with Power BI**
 
 Integrating **ServiceNow** with **Power BI** allows organizations to visualize and analyze incident, request, change, and performance data from ServiceNow in a dynamic and interactive manner. This integration empowers stakeholders with actionable insights into IT service management (ITSM) processes, helping track SLA performance, identify bottlenecks, and optimize workflows.
