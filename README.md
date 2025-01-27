@@ -1,3 +1,5 @@
+In this architecture, **Power BI Service** connects to an **on-premises data source** via a **Power BI Data Gateway** hosted on an **Azure VM**. The Azure VM is deployed within a **private VNet** and secured by an **Azure Firewall**, ensuring that only authorized traffic from Power BI Service and the on-premises data source is allowed. The Data Gateway acts as a secure bridge, facilitating encrypted data transfer between the on-premises environment and cloud-based **Azure SQL Database**. The Azure Firewall enforces strict network access policies, protecting the Azure resources from unauthorized access while allowing connectivity for Power BI to retrieve and process the data. This setup enables a secure and seamless hybrid data solution, leveraging the cloud scalability of Azure SQL while maintaining compliance and security for on-premises systems.
+
 
 In a scenario involving **Power BI**, **Azure Application Gateway**, **Azure Functions**, and **Azure SQL**, the need for a **Power BI Data Gateway** depends on the **network configuration** of your Azure resources. Let’s analyze:
 
