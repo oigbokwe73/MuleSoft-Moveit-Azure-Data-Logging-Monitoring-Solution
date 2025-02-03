@@ -1,3 +1,7 @@
+
+
+
+
 In this architecture, **Power BI Service** connects to an **on-premises data source** via a **Power BI Data Gateway** hosted on an **Azure VM**. The Azure VM is deployed within a **private VNet** and secured by an **Azure Firewall**, ensuring that only authorized traffic from Power BI Service and the on-premises data source is allowed. The Data Gateway acts as a secure bridge, facilitating encrypted data transfer between the on-premises environment and cloud-based **Azure SQL Database**. The Azure Firewall enforces strict network access policies, protecting the Azure resources from unauthorized access while allowing connectivity for Power BI to retrieve and process the data. This setup enables a secure and seamless hybrid data solution, leveraging the cloud scalability of Azure SQL while maintaining compliance and security for on-premises systems.
 
 
@@ -71,6 +75,29 @@ You only need a **Power BI Data Gateway** if:
 
 Otherwise, for **cloud-native public connections** (e.g., through Azure Application Gateway or Functions), a Data Gateway is not required. Let me know if you'd like step-by-step guidance for any of these configurations! 😊
 Here’s a **Mermaid diagram** to represent the integration process between **ServiceNow, Power BI**, and additional data sources for visualizing metrics.
+
+```mermaid
+
+graph TD
+    A[Medicaid Enterprise System MES Portal] -->|Embedded Power BI Dashboard| B[Power BI Service]
+    
+    B -->|Fetches Data| C[Azure SQL Database]
+    B -->|Fetches Data| D[Azure Log Analytics]
+    B -->|Fetches Data| E[ServiceNow API]
+    
+    C -->|Messages Received| F[SIP]
+    C -->|Files Transferred| G[MFTS]
+    
+    D -->|Captures Logs & Metrics| I[System Performance Logs]
+    D -->|Monitors Application Uptime| J[Infrastructure Health Metrics]
+
+    E -->|Tracks IT Service Requests| K[Incident Management Data]
+    E -->|Monitors SLA Compliance| L[Change Requests]
+
+    B -->|Generates Reports & Dashboards| M[Real-Time Data Visualization]
+    
+    M -->|Access Controlled by RBAC| N[Authorized Medicaid Administrators & Providers]
+```
 
 ```mermaid
 graph TD
