@@ -76,6 +76,10 @@ You only need a **Power BI Data Gateway** if:
 Otherwise, for **cloud-native public connections** (e.g., through Azure Application Gateway or Functions), a Data Gateway is not required. Let me know if you'd like step-by-step guidance for any of these configurations! 😊
 Here’s a **Mermaid diagram** to represent the integration process between **ServiceNow, Power BI**, and additional data sources for visualizing metrics.
 
+Below is a **Mermaid Diagram** illustrating the integration of **Power BI within the MES (Medicaid Enterprise System) Portal**, showing how data flows from various sources to Power BI for visualization.
+
+
+
 ```mermaid
 
 graph TD
@@ -94,11 +98,32 @@ graph TD
     E -->|Tracks IT Service Requests| K[Incident Management Data]
     E -->|Monitors SLA Compliance| L[Change Requests]
 
-    B -->|Generates Reports & Dashboards| M[Real-Time Data Visualization]
+    B -->|Generates Reports & Dashboards| M[Data Visualization]
     
     M -->|Access Controlled by RBAC| N[Authorized Medicaid Administrators & Providers]
 ```
 
+---
+
+### **Explanation of the Diagram**
+1. **MES Portal**: Hosts **Power BI dashboards**, providing **real-time insights** into Medicaid operations.
+2. **Power BI Service**: Retrieves data from **Azure SQL**, **Azure Log Analytics**, and **ServiceNow APIs**.
+3. **Azure SQL Database**: Stores **claims, beneficiary eligibility, and provider information** for Medicaid programs.
+4. **Azure Log Analytics**: Captures **system performance metrics, application uptime, and infrastructure health logs**.
+5. **ServiceNow API**: Provides data on **IT service requests, incident resolutions, and SLA compliance**.
+6. **Power BI Dashboards**: Generates **interactive reports**, which are **role-based access controlled (RBAC)**, ensuring secure data access.
+7. **Authorized Users**: **Medicaid administrators, healthcare providers, and IT teams** can view relevant reports.
+
+---
+
+### **Key Benefits**
+✅ **Real-time Monitoring**: Stakeholders can track **claims processing, system uptime, and security events** instantly.  
+✅ **Enhanced Decision-Making**: Enables Medicaid administrators to **optimize service delivery**.  
+✅ **Automated Data Refresh**: Keeps dashboards up-to-date without manual intervention.  
+✅ **Compliance & Security**: RBAC ensures only **authorized users** access sensitive Medicaid data.  
+✅ **Operational Efficiency**: ServiceNow integration allows **IT teams to respond to incidents faster**.
+
+This architecture ensures **seamless analytics and reporting** for Medicaid services, driving **data-driven decision-making** and **improving healthcare outcomes**! 🚀
 ```mermaid
 graph TD
     A[ServiceNow] -->|REST API Integration| B[Power BI Desktop]
