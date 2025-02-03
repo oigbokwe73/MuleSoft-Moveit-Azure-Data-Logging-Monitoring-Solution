@@ -100,7 +100,7 @@ graph TD
 
     B -->|Generates Reports & Dashboards| M[Data Visualization]
     
-    M -->|Access Controlled by RBAC| N[Authorized Medicaid Administrators & Providers]
+    M -->|Access Controlled by RBAC| N[Authorized Medicaid users]
 ```
 
 ---
