@@ -1,94 +1,114 @@
-### **Example: Monitoring Azure Metrics (CPU Utilization) in Power BI Using Log Analytics Workspace**
-  
-In this example, we’ll track **CPU utilization** from **Azure Virtual Machines (VMs)** using **Azure Monitor & Log Analytics**, then visualize it in **Power BI** through **Power BI Connectors**.
+### **Example: Azure Metrics (CPU Utilization, Entra ID Logs) to Power BI via Log Analytics Workspace**  
+
+This setup shows how **Azure VM CPU utilization and Entra ID (IDM) security logs** are collected using **Azure Monitor & Log Analytics Workspace**, then visualized in **Power BI** for monitoring and analytics.
 
 ---
 
-### **Step-by-Step Data Flow**
-1. **Azure Monitor collects CPU utilization metrics** from the MES infrastructure, including Virtual Machines.
-2. **Log Analytics Workspace stores and processes the telemetry data** in real time.
-3. **Power BI connects to Log Analytics using the Power BI Connector**, running **Kusto Query Language (KQL)** to extract and visualize CPU usage trends.
-4. **Dashboards in Power BI** display **real-time insights on VM performance, system health, and resource optimization**.
+## **🔹 Workflow Overview**
+1. **Azure Monitor** collects metrics such as **CPU utilization of VMs** and **user authentication logs from Entra ID (IDM)**.
+2. **Log Analytics Workspace** acts as a central hub, aggregating logs from **Azure VMs and Entra ID**.
+3. **Azure Data Connector for Power BI** retrieves **structured data from Log Analytics**.
+4. **Power BI Dashboards** visualize key performance and security metrics with real-time refresh.
 
 ---
 
-### **Mermaid Diagram**
+### **🔷 Example Metrics for Power BI Dashboards**
+| **Category**      | **Metric**                                  | **Description**                                             |
+|------------------|------------------------------------------|-------------------------------------------------------------|
+| **Azure VM Metrics** | **CPU Utilization (%)**                    | Tracks CPU load across VMs to optimize resource usage.      |
+|                  | **Memory Utilization (%)**                | Monitors available and used memory in VMs.                 |
+|                  | **Disk I/O (MB/s)**                       | Measures read/write operations per second.                  |
+|                  | **Network Latency (ms)**                  | Tracks network response time for VM communications.         |
+| **Azure Entra ID (IDM) Metrics** | **Failed Login Attempts**                 | Detects unauthorized access attempts.                      |
+|                  | **Successful Logins**                     | Measures authentication success rates.                      |
+|                  | **Conditional Access Blocks**            | Identifies access denied due to policy enforcement.        |
+|                  | **MFA Challenges Triggered**             | Tracks MFA authentication activity.                        |
+|                  | **High-Risk Sign-Ins**                    | Detects potential security breaches or compromised users. |
+
+---
+
+### **🔷 Mermaid Diagram: Azure Metrics Flow to Power BI**
 ```mermaid
 sequenceDiagram
     participant User as MES User (Power BI)
+    participant AzureMonitor as Azure Monitor
+    participant LogAnalytics as Log Analytics Workspace
+    participant EntraID as Azure Entra ID (IDM)
+    participant AzureSQL as Azure SQL Database
     participant PowerBI as Power BI Service
-    participant LogAnalytics as Azure Log Analytics Workspace
-    participant Monitor as Azure Monitor
-    participant VM as Azure Virtual Machine
 
-    %% Step 1: Data Collection
-    VM->>Monitor: Collect CPU Utilization Metrics (Percentage)
-    Monitor->>LogAnalytics: Store CPU Utilization Logs
+    %% Step 1: Collect VM Metrics
+    AzureMonitor->>LogAnalytics: Send VM Metrics (CPU, Memory, Disk, Network)
+    LogAnalytics->>AzureSQL: Store Processed Metrics
 
-    %% Step 2: Query and Fetch Data
-    PowerBI->>LogAnalytics: Run KQL Query (Fetch CPU Data)
-    LogAnalytics->>PowerBI: Return Processed CPU Utilization Metrics
+    %% Step 2: Collect Entra ID Logs
+    EntraID->>LogAnalytics: Send Authentication & Security Logs
+    LogAnalytics->>AzureSQL: Store Entra ID Logs
 
-    %% Step 3: Visualization
-    PowerBI->>User: Display CPU Utilization Dashboard
-    User->>PowerBI: Drill Down into Specific VM Usage
+    %% Step 3: Power BI Queries Data
+    PowerBI->>AzureSQL: Fetch CPU Utilization & VM Logs
+    PowerBI->>LogAnalytics: Fetch Entra ID Security Logs
+
+    %% Step 4: User Accesses Power BI Dashboard
+    User->>PowerBI: View CPU Utilization & Security Insights
+    PowerBI->>User: Display Interactive Dashboard
 ```
 
 ---
 
-### **Step-by-Step Implementation**
+### **🔷 Step-by-Step Implementation**
 
-#### **Step 1: Enable Azure Monitor & Log Analytics for CPU Utilization**
-1. **Go to Azure Portal → Virtual Machines**  
-2. Select the VM you want to monitor.
-3. **Navigate to Monitoring → Insights** and enable **Azure Monitor**.
-4. Under **Diagnostic Settings**, send logs to **Log Analytics Workspace**.
-5. In **Log Analytics Workspace**, ensure metrics like `Percentage CPU` are being captured.
+#### **Step 1: Enable Azure Monitor for VM Metrics**
+1. **Go to Azure Portal** → Search for **"Monitor"**.
+2. Navigate to **Metrics** → Select the **Virtual Machine** resource.
+3. Choose **CPU Utilization, Memory, Network, and Disk metrics**.
+4. Click **"Add to Log Analytics Workspace"**.
 
----
+#### **Step 2: Enable Entra ID Logs in Log Analytics**
+1. Go to **Azure Entra ID** → **Monitoring & Diagnostic Settings**.
+2. Select **Log Analytics** as the destination.
+3. Enable:
+   - **Sign-in Logs** (Success, Failure)
+   - **Audit Logs** (Policy Changes, MFA Challenges)
+   - **Risk Detections** (High-Risk Users, Suspicious IPs)
 
-#### **Step 2: Query CPU Utilization Data in Log Analytics**
-1. Open **Azure Log Analytics Workspace**.
-2. Run the following **KQL Query** in **Log Analytics Query Editor** to fetch CPU usage:
+#### **Step 3: Connect Log Analytics to Power BI**
+1. **Open Power BI Desktop**.
+2. Click **Get Data** → Choose **Azure Monitor Logs**.
+3. Select **Log Analytics Workspace** → Enter credentials.
+4. Use **KQL Queries** to extract relevant data:
    ```kql
-   Perf
-   | where ObjectName == "Processor"
-   | where CounterName == "% Processor Time"
-   | summarize AvgCPU = avg(CounterValue) by bin(TimeGenerated, 5m), Computer
-   | order by TimeGenerated desc
+   AzureMetrics
+   | where ResourceType == "Virtual Machine"
+   | summarize avg(CPUUtilization) by bin(TimeGenerated, 1h)
    ```
-3. Save the query and verify data ingestion.
+   ```kql
+   SigninLogs
+   | where ResultType != 0
+   | summarize FailedAttempts = count() by bin(TimeGenerated, 1h)
+   ```
+
+#### **Step 4: Design Power BI Dashboard**
+- **CPU Utilization Chart** (Line Graph: VM CPU over time).
+- **Failed Login Attempts** (Bar Chart: Failed logins per hour).
+- **Conditional Access Blocks** (Pie Chart: Blocked vs. Successful logins).
+- **Network Activity** (Table: IP Addresses & Latency).
+
+#### **Step 5: Schedule Auto Refresh in Power BI**
+1. Publish the report to **Power BI Service**.
+2. Go to **Dataset Settings** → Enable **Scheduled Refresh**.
+3. Set refresh frequency (Every 1 Hour / Every 30 Minutes).
 
 ---
 
-#### **Step 3: Connect Power BI to Log Analytics**
-1. Open **Power BI Desktop**.
-2. Click **Get Data → Azure → Azure Monitor Logs**.
-3. Authenticate using **Azure credentials**.
-4. Enter the **KQL query** above to fetch CPU metrics.
-5. Load the data into **Power BI**.
+### **🔷 Benefits of This Setup**
+✅ **Real-Time Insights**: MES users track **VM performance** and **security metrics** dynamically.  
+✅ **Security Monitoring**: Detect **failed logins, MFA usage, and high-risk sign-ins** instantly.  
+✅ **Performance Optimization**: Monitor **CPU, Memory, and Network Latency** for better Azure VM performance.  
+✅ **Automated Refresh**: Power BI updates reports **without manual intervention**.  
+✅ **Role-Based Access**: Azure Entra ID ensures **secure access control** to dashboards.
 
----
-
-#### **Step 4: Build Power BI Dashboard**
-1. **Create visualizations**:
-   - **Line Chart**: Shows CPU utilization trends over time.
-   - **Gauge Chart**: Displays current CPU usage percentage.
-   - **Bar Chart**: Compares CPU usage across multiple VMs.
-2. **Apply Filters**:
-   - **Date Range**: Analyze CPU usage over different timeframes.
-   - **VM Name**: Select specific Virtual Machines.
-3. **Enable Scheduled Refresh** to auto-update CPU usage metrics.
-
----
-
-### **Key Benefits**
-✅ **Real-Time Monitoring** – Power BI fetches live CPU utilization data from Azure.  
-✅ **Performance Optimization** – Detect over-utilized or under-utilized VMs.  
-✅ **Drill-Down Capabilities** – Users can analyze CPU spikes per VM.  
-✅ **Automated Reporting** – Power BI auto-refreshes dashboards for up-to-date insights.  
-
----
+This setup **empowers MES administrators** to **visualize and act on key Azure performance and security metrics**, improving **system health, security posture, and operational efficiency**. 🚀---
 
 This setup **enhances MES system monitoring**, providing data-driven decisions on **infrastructure health** and **resource optimization**. 🚀 Let me know if you need more details!
 Here is a **detailed sequence diagram** illustrating how **Power BI is integrated into the MES Portal**, covering **authentication and authorization with Azure Entra ID, workspace access, printing and drill-down into reports, and scheduled auto-refresh**.
