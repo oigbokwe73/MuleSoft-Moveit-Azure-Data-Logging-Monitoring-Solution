@@ -1,4 +1,96 @@
+### **Example: Monitoring Azure Metrics (CPU Utilization) in Power BI Using Log Analytics Workspace**
+  
+In this example, we’ll track **CPU utilization** from **Azure Virtual Machines (VMs)** using **Azure Monitor & Log Analytics**, then visualize it in **Power BI** through **Power BI Connectors**.
 
+---
+
+### **Step-by-Step Data Flow**
+1. **Azure Monitor collects CPU utilization metrics** from the MES infrastructure, including Virtual Machines.
+2. **Log Analytics Workspace stores and processes the telemetry data** in real time.
+3. **Power BI connects to Log Analytics using the Power BI Connector**, running **Kusto Query Language (KQL)** to extract and visualize CPU usage trends.
+4. **Dashboards in Power BI** display **real-time insights on VM performance, system health, and resource optimization**.
+
+---
+
+### **Mermaid Diagram**
+```mermaid
+sequenceDiagram
+    participant User as MES User (Power BI)
+    participant PowerBI as Power BI Service
+    participant LogAnalytics as Azure Log Analytics Workspace
+    participant Monitor as Azure Monitor
+    participant VM as Azure Virtual Machine
+
+    %% Step 1: Data Collection
+    VM->>Monitor: Collect CPU Utilization Metrics (Percentage)
+    Monitor->>LogAnalytics: Store CPU Utilization Logs
+
+    %% Step 2: Query and Fetch Data
+    PowerBI->>LogAnalytics: Run KQL Query (Fetch CPU Data)
+    LogAnalytics->>PowerBI: Return Processed CPU Utilization Metrics
+
+    %% Step 3: Visualization
+    PowerBI->>User: Display CPU Utilization Dashboard
+    User->>PowerBI: Drill Down into Specific VM Usage
+```
+
+---
+
+### **Step-by-Step Implementation**
+
+#### **Step 1: Enable Azure Monitor & Log Analytics for CPU Utilization**
+1. **Go to Azure Portal → Virtual Machines**  
+2. Select the VM you want to monitor.
+3. **Navigate to Monitoring → Insights** and enable **Azure Monitor**.
+4. Under **Diagnostic Settings**, send logs to **Log Analytics Workspace**.
+5. In **Log Analytics Workspace**, ensure metrics like `Percentage CPU` are being captured.
+
+---
+
+#### **Step 2: Query CPU Utilization Data in Log Analytics**
+1. Open **Azure Log Analytics Workspace**.
+2. Run the following **KQL Query** in **Log Analytics Query Editor** to fetch CPU usage:
+   ```kql
+   Perf
+   | where ObjectName == "Processor"
+   | where CounterName == "% Processor Time"
+   | summarize AvgCPU = avg(CounterValue) by bin(TimeGenerated, 5m), Computer
+   | order by TimeGenerated desc
+   ```
+3. Save the query and verify data ingestion.
+
+---
+
+#### **Step 3: Connect Power BI to Log Analytics**
+1. Open **Power BI Desktop**.
+2. Click **Get Data → Azure → Azure Monitor Logs**.
+3. Authenticate using **Azure credentials**.
+4. Enter the **KQL query** above to fetch CPU metrics.
+5. Load the data into **Power BI**.
+
+---
+
+#### **Step 4: Build Power BI Dashboard**
+1. **Create visualizations**:
+   - **Line Chart**: Shows CPU utilization trends over time.
+   - **Gauge Chart**: Displays current CPU usage percentage.
+   - **Bar Chart**: Compares CPU usage across multiple VMs.
+2. **Apply Filters**:
+   - **Date Range**: Analyze CPU usage over different timeframes.
+   - **VM Name**: Select specific Virtual Machines.
+3. **Enable Scheduled Refresh** to auto-update CPU usage metrics.
+
+---
+
+### **Key Benefits**
+✅ **Real-Time Monitoring** – Power BI fetches live CPU utilization data from Azure.  
+✅ **Performance Optimization** – Detect over-utilized or under-utilized VMs.  
+✅ **Drill-Down Capabilities** – Users can analyze CPU spikes per VM.  
+✅ **Automated Reporting** – Power BI auto-refreshes dashboards for up-to-date insights.  
+
+---
+
+This setup **enhances MES system monitoring**, providing data-driven decisions on **infrastructure health** and **resource optimization**. 🚀 Let me know if you need more details!
 Here is a **detailed sequence diagram** illustrating how **Power BI is integrated into the MES Portal**, covering **authentication and authorization with Azure Entra ID, workspace access, printing and drill-down into reports, and scheduled auto-refresh**.
 
 ```mermaid
