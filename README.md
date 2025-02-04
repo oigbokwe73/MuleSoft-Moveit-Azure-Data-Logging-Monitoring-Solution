@@ -35,7 +35,7 @@ sequenceDiagram
     Dataset->>ServiceNow: Example Fetch Incident, Changes, Problems
     SQL-->>Dataset: Return Query Results
     LogAnalytics-->>Dataset: Return Performance Metrics
-    ServiceNow-->>Dataset: Return SLA & Ticket Status
+    ServiceNow-->>Dataset: Return Incidents, Changes, Problems
     Dataset-->>PowerBI: Populate Visualization
     PowerBI->>User: Render Detailed Drill-Down Report
     User->>PowerBI: Request Print Report
@@ -46,10 +46,10 @@ sequenceDiagram
     PowerBI->>Dataset: Trigger Scheduled Refresh
     Dataset->>SQL: Fetch Latest Data Updates
     Dataset->>LogAnalytics: Retrieve Latest Logs
-    Dataset->>ServiceNow: Fetch Updated Incidents
+    Dataset->>ServiceNow: Fetch Updated Incidents, Changes, Problems
     SQL-->>Dataset: Return Updated Data
     LogAnalytics-->>Dataset: Return Latest Logs
-    ServiceNow-->>Dataset: Return Updated SLA Records
+    ServiceNow-->>Dataset: Return Updated Incidents, Changes, Problems
     Dataset-->>PowerBI: Update Reports
     PowerBI->>MES: Notify Users of Updated Reports
 
