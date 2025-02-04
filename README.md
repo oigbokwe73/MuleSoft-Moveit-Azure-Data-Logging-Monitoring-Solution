@@ -5,7 +5,7 @@ Here is a **detailed sequence diagram** illustrating how **Power BI is integrate
 sequenceDiagram
     participant User as MES Portal User
     participant MES as MES Portal
-    participant AzureAD as Azure Entra ID
+    participant AzureAD as Azure Entra ID (IDM)
     participant PowerBI as Power BI Service
     participant Dataset as Power BI Dataset
     participant SQL as Azure SQL Database
@@ -14,10 +14,10 @@ sequenceDiagram
 
     %% Step 1: Authentication & Authorization
     User->>MES: Request Login
-    MES->>AzureAD: Redirect to Azure Entra ID (OIDC/OAuth)
-    AzureAD->>User: User Authentication (MFA if required)
+    MES->>AzureAD: Redirect to Azure Entra ID(IDM)
+    AzureAD->>User: User Authentication 
     User->>AzureAD: Provide Credentials
-    AzureAD->>MES: Issue Access Token (JWT) & Claims
+    AzureAD->>MES: Issue Access Token & Claims
     MES->>PowerBI: Pass Token for Authorization
     PowerBI->>MES: Validate Token and Permissions
 
