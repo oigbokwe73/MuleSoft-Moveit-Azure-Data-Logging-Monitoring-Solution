@@ -1,5 +1,99 @@
 
+Here is a **detailed sequence diagram** illustrating how **Power BI is integrated into the MES Portal**, covering **authentication and authorization with Azure Entra ID, workspace access, printing and drill-down into reports, and scheduled auto-refresh**.
 
+```mermaid
+sequenceDiagram
+    participant User as MES Portal User
+    participant MES as MES Portal
+    participant AzureAD as Azure Entra ID
+    participant PowerBI as Power BI Service
+    participant Dataset as Power BI Dataset
+    participant SQL as Azure SQL Database
+    participant LogAnalytics as Azure Log Analytics
+    participant ServiceNow as ServiceNow API
+
+    %% Step 1: Authentication & Authorization
+    User->>MES: Request Login
+    MES->>AzureAD: Redirect to Azure Entra ID (OIDC/OAuth)
+    AzureAD->>User: User Authentication (MFA if required)
+    User->>AzureAD: Provide Credentials
+    AzureAD->>MES: Issue Access Token (JWT) & Claims
+    MES->>PowerBI: Pass Token for Authorization
+    PowerBI->>MES: Validate Token and Permissions
+
+    %% Step 2: Workspace Access & Report Viewing
+    User->>MES: Request Power BI Dashboard
+    MES->>PowerBI: Fetch Embedded Dashboard (Workspace Access)
+    PowerBI->>MES: Return Dashboard URL with Secure Embed Token
+    MES->>User: Display Interactive Power BI Dashboard
+
+    %% Step 3: Drill-Down & Print Reports
+    User->>PowerBI: Drill-down into Report Data
+    PowerBI->>Dataset: Query Data from Dataset
+    Dataset->>SQL: Fetch Claims & Eligibility Data
+    Dataset->>LogAnalytics: Fetch System Performance Data
+    Dataset->>ServiceNow: Fetch Incident & SLA Data
+    SQL-->>Dataset: Return Query Results
+    LogAnalytics-->>Dataset: Return Performance Metrics
+    ServiceNow-->>Dataset: Return SLA & Ticket Status
+    Dataset-->>PowerBI: Populate Visualization
+    PowerBI->>User: Render Detailed Drill-Down Report
+    User->>PowerBI: Request Print Report
+    PowerBI->>MES: Generate Printable PDF
+    MES->>User: Download Printable Report
+
+    %% Step 4: Scheduled Auto Refresh
+    PowerBI->>Dataset: Trigger Scheduled Refresh
+    Dataset->>SQL: Fetch Latest Data Updates
+    Dataset->>LogAnalytics: Retrieve Latest Logs
+    Dataset->>ServiceNow: Fetch Updated Incidents
+    SQL-->>Dataset: Return Updated Data
+    LogAnalytics-->>Dataset: Return Latest Logs
+    ServiceNow-->>Dataset: Return Updated SLA Records
+    Dataset-->>PowerBI: Update Reports
+    PowerBI->>MES: Notify Users of Updated Reports
+
+    %% End of Sequence
+```
+
+---
+
+### **Explanation of the Sequence Diagram**
+1. **Authentication & Authorization**
+   - User logs into the **MES Portal**.
+   - The MES Portal redirects the user to **Azure Entra ID** for authentication.
+   - If required, **MFA (Multi-Factor Authentication)** is enforced.
+   - Upon successful authentication, Azure Entra ID issues an **Access Token (JWT)**.
+   - The MES Portal validates the token with **Power BI Service**, ensuring **RBAC-based access control**.
+
+2. **Power BI Workspace Access & Report Viewing**
+   - User requests access to a **Power BI report embedded in the MES Portal**.
+   - Power BI verifies the **workspace access permissions**.
+   - Power BI generates a **Secure Embed Token** and returns it to the MES Portal.
+   - The MES Portal **renders the interactive Power BI dashboard** for the user.
+
+3. **Drill-Down & Print Reports**
+   - User interacts with the Power BI report to drill down into **claims, eligibility, or system performance data**.
+   - Power BI queries the **Azure SQL Database, Azure Log Analytics, and ServiceNow API** to fetch real-time insights.
+   - The dataset updates in Power BI, and the drilled-down report is displayed.
+   - User can choose to print the report, which is **generated as a PDF by Power BI** and sent to the MES Portal for download.
+
+4. **Scheduled Auto Refresh**
+   - Power BI triggers a **scheduled refresh** for datasets.
+   - It retrieves **latest claims, incidents, and system logs** from respective sources.
+   - Once the refresh is complete, Power BI updates all reports in the **MES Portal**.
+   - Users get notified that new data is available for analysis.
+
+---
+
+### **Key Features of This Integration**
+✅ **Secure Authentication**: Azure Entra ID ensures only **authorized users** access Power BI dashboards.  
+✅ **RBAC-Based Access**: Different user roles control **who can view or modify reports**.  
+✅ **Real-Time Data Drill-Down**: Power BI fetches live data from **Azure SQL, Log Analytics, and ServiceNow**.  
+✅ **Printing and Exporting**: Users can **print reports** or download them as PDFs.  
+✅ **Scheduled Data Refresh**: Ensures reports always contain **latest Medicaid data**.  
+
+This **Power BI + MES Portal** integration **enhances transparency, decision-making, and compliance** for Medicaid stakeholders. 🚀
 
 
 In this architecture, **Power BI Service** connects to an **on-premises data source** via a **Power BI Data Gateway** hosted on an **Azure VM**. The Azure VM is deployed within a **private VNet** and secured by an **Azure Firewall**, ensuring that only authorized traffic from Power BI Service and the on-premises data source is allowed. The Data Gateway acts as a secure bridge, facilitating encrypted data transfer between the on-premises environment and cloud-based **Azure SQL Database**. The Azure Firewall enforces strict network access policies, protecting the Azure resources from unauthorized access while allowing connectivity for Power BI to retrieve and process the data. This setup enables a secure and seamless hybrid data solution, leveraging the cloud scalability of Azure SQL while maintaining compliance and security for on-premises systems.
