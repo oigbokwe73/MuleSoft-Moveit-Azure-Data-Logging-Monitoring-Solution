@@ -23,16 +23,16 @@ sequenceDiagram
 
     %% Step 2: Workspace Access & Report Viewing
     User->>MES: Request Power BI Dashboard
-    MES->>PowerBI: Fetch Embedded Dashboard (Workspace Access)
-    PowerBI->>MES: Return Dashboard URL with Secure Embed Token
+    MES->>PowerBI: Fetch integrated Dashboard (Workspace Access)
+    PowerBI->>MES: Return Dashboard URL with Secure Token
     MES->>User: Display Interactive Power BI Dashboard
 
     %% Step 3: Drill-Down & Print Reports
     User->>PowerBI: Drill-down into Report Data
     PowerBI->>Dataset: Query Data from Dataset
-    Dataset->>SQL: Fetch Claims & Eligibility Data
-    Dataset->>LogAnalytics: Fetch System Performance Data
-    Dataset->>ServiceNow: Fetch Incident & SLA Data
+    Dataset->>SQL: Example [SIP] Failed, Delivered Messages
+    Dataset->>LogAnalytics: Example [Azure] Fetch System Performance Data
+    Dataset->>ServiceNow: Example Fetch Incident, Changes, Problems
     SQL-->>Dataset: Return Query Results
     LogAnalytics-->>Dataset: Return Performance Metrics
     ServiceNow-->>Dataset: Return SLA & Ticket Status
