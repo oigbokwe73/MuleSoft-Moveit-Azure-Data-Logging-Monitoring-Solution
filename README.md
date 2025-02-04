@@ -13,7 +13,7 @@ sequenceDiagram
     VM-->>LogAnalytics: Send Performance & Availability Metrics
     
     %% Step 2: Collect Logs from Azure Entra ID (IDM)
-    Entra-->>LogAnalytics: Send Sign-in Logs, Access Control Events
+    Entra-->>LogAnalytics: Send Sign-in Logs, App Availability
     Entra-->>LogAnalytics: Send Security & Audit Logs
 
     %% Step 3: Power BI Queries Log Analytics
