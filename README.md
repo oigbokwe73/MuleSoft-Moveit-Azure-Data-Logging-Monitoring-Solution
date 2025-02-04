@@ -1,115 +1,68 @@
-### **Example: Azure Metrics (CPU Utilization, Entra ID Logs) to Power BI via Log Analytics Workspace**  
+### **Mermaid Diagram: Azure Metrics for VMs & Azure Entra ID to Power BI using Log Analytics**
 
-This setup shows how **Azure VM CPU utilization and Entra ID (IDM) security logs** are collected using **Azure Monitor & Log Analytics Workspace**, then visualized in **Power BI** for monitoring and analytics.
-
----
-
-## **🔹 Workflow Overview**
-1. **Azure Monitor** collects metrics such as **CPU utilization of VMs** and **user authentication logs from Entra ID (IDM)**.
-2. **Log Analytics Workspace** acts as a central hub, aggregating logs from **Azure VMs and Entra ID**.
-3. **Azure Data Connector for Power BI** retrieves **structured data from Log Analytics**.
-4. **Power BI Dashboards** visualize key performance and security metrics with real-time refresh.
-
----
-
-### **🔷 Example Metrics for Power BI Dashboards**
-| **Category**      | **Metric**                                  | **Description**                                             |
-|------------------|------------------------------------------|-------------------------------------------------------------|
-| **Azure VM Metrics** | **CPU Utilization (%)**                    | Tracks CPU load across VMs to optimize resource usage.      |
-|                  | **Memory Utilization (%)**                | Monitors available and used memory in VMs.                 |
-|                  | **Disk I/O (MB/s)**                       | Measures read/write operations per second.                  |
-|                  | **Network Latency (ms)**                  | Tracks network response time for VM communications.         |
-| **Azure Entra ID (IDM) Metrics** | **Failed Login Attempts**                 | Detects unauthorized access attempts.                      |
-|                  | **Successful Logins**                     | Measures authentication success rates.                      |
-|                  | **Conditional Access Blocks**            | Identifies access denied due to policy enforcement.        |
-|                  | **MFA Challenges Triggered**             | Tracks MFA authentication activity.                        |
-|                  | **High-Risk Sign-Ins**                    | Detects potential security breaches or compromised users. |
-
----
-
-### **🔷 Mermaid Diagram: Azure Metrics Flow to Power BI**
 ```mermaid
 sequenceDiagram
-    participant User as MES User (Power BI)
-    participant AzureMonitor as Azure Monitor
-    participant LogAnalytics as Log Analytics Workspace
-    participant EntraID as Azure Entra ID (IDM)
-    participant AzureSQL as Azure SQL Database
+    participant VM as Azure Virtual Machines
+    participant Entra as Azure Entra ID (IDM)
+    participant LogAnalytics as Azure Log Analytics Workspace
     participant PowerBI as Power BI Service
+    participant User as MES User
+    
+    %% Step 1: Collect Metrics from Azure VMs
+    VM-->>LogAnalytics: Send CPU, Memory, Disk, Network Logs
+    VM-->>LogAnalytics: Send Performance & Availability Metrics
+    
+    %% Step 2: Collect Logs from Azure Entra ID (IDM)
+    Entra-->>LogAnalytics: Send Sign-in Logs, Access Control Events
+    Entra-->>LogAnalytics: Send Security & Audit Logs
 
-    %% Step 1: Collect VM Metrics
-    AzureMonitor->>LogAnalytics: Send VM Metrics (CPU, Memory, Disk, Network)
-    LogAnalytics->>AzureSQL: Store Processed Metrics
-
-    %% Step 2: Collect Entra ID Logs
-    EntraID->>LogAnalytics: Send Authentication & Security Logs
-    LogAnalytics->>AzureSQL: Store Entra ID Logs
-
-    %% Step 3: Power BI Queries Data
-    PowerBI->>AzureSQL: Fetch CPU Utilization & VM Logs
-    PowerBI->>LogAnalytics: Fetch Entra ID Security Logs
-
-    %% Step 4: User Accesses Power BI Dashboard
-    User->>PowerBI: View CPU Utilization & Security Insights
-    PowerBI->>User: Display Interactive Dashboard
+    %% Step 3: Power BI Queries Log Analytics
+    PowerBI-->>LogAnalytics: Fetch VM & Entra Logs using KQL
+    LogAnalytics-->>PowerBI: Return Processed Data
+    
+    %% Step 4: MES User Accesses Power BI Reports
+    User-->>PowerBI: Request Dashboard
+    PowerBI-->>User: Display Real-Time VM & IDM Metrics
 ```
 
 ---
 
-### **🔷 Step-by-Step Implementation**
+### **Explanation of the Diagram**
+1. **Azure Virtual Machines (VMs) Send Metrics**:  
+   - **Performance Metrics**: CPU, Memory, Disk, Network Usage.  
+   - **Availability Metrics**: VM Uptime, Latency, and Health Status.  
+   - **Resource Utilization**: Identifies over/under-utilized VMs.  
 
-#### **Step 1: Enable Azure Monitor for VM Metrics**
-1. **Go to Azure Portal** → Search for **"Monitor"**.
-2. Navigate to **Metrics** → Select the **Virtual Machine** resource.
-3. Choose **CPU Utilization, Memory, Network, and Disk metrics**.
-4. Click **"Add to Log Analytics Workspace"**.
+2. **Azure Entra ID (IDM) Sends Logs**:  
+   - **Sign-in Activity**: Tracks user logins, failures, and access patterns.  
+   - **Audit Logs**: Captures directory changes, group modifications, and security violations.  
+   - **Conditional Access Events**: Monitors enforced policies for security compliance.  
 
-#### **Step 2: Enable Entra ID Logs in Log Analytics**
-1. Go to **Azure Entra ID** → **Monitoring & Diagnostic Settings**.
-2. Select **Log Analytics** as the destination.
-3. Enable:
-   - **Sign-in Logs** (Success, Failure)
-   - **Audit Logs** (Policy Changes, MFA Challenges)
-   - **Risk Detections** (High-Risk Users, Suspicious IPs)
+3. **Log Analytics Workspace Aggregates Data**:  
+   - **Stores and Processes Logs** from VMs and Azure Entra ID.  
+   - **Uses Kusto Query Language (KQL)** for structured data analysis.  
+   - **Provides APIs for Power BI to Fetch Data** dynamically.  
 
-#### **Step 3: Connect Log Analytics to Power BI**
-1. **Open Power BI Desktop**.
-2. Click **Get Data** → Choose **Azure Monitor Logs**.
-3. Select **Log Analytics Workspace** → Enter credentials.
-4. Use **KQL Queries** to extract relevant data:
-   ```kql
-   AzureMetrics
-   | where ResourceType == "Virtual Machine"
-   | summarize avg(CPUUtilization) by bin(TimeGenerated, 1h)
-   ```
-   ```kql
-   SigninLogs
-   | where ResultType != 0
-   | summarize FailedAttempts = count() by bin(TimeGenerated, 1h)
-   ```
+4. **Power BI Queries Log Analytics**:  
+   - **Power BI Connectors** fetch data from **Log Analytics Workspace**.  
+   - **Dashboards & Reports** visualize system health, security insights, and performance trends.  
+   - **Auto-refresh enabled** to maintain up-to-date metrics.  
 
-#### **Step 4: Design Power BI Dashboard**
-- **CPU Utilization Chart** (Line Graph: VM CPU over time).
-- **Failed Login Attempts** (Bar Chart: Failed logins per hour).
-- **Conditional Access Blocks** (Pie Chart: Blocked vs. Successful logins).
-- **Network Activity** (Table: IP Addresses & Latency).
-
-#### **Step 5: Schedule Auto Refresh in Power BI**
-1. Publish the report to **Power BI Service**.
-2. Go to **Dataset Settings** → Enable **Scheduled Refresh**.
-3. Set refresh frequency (Every 1 Hour / Every 30 Minutes).
+5. **MES Users Access Power BI Reports**:  
+   - **Role-Based Access Control (RBAC)** ensures only authorized users view specific reports.  
+   - **Drill-Down Capabilities** allow deep analysis into system issues and trends.  
+   - **Interactive Visuals** display key metrics for **Azure VMs and Entra ID security events**.  
 
 ---
 
-### **🔷 Benefits of This Setup**
-✅ **Real-Time Insights**: MES users track **VM performance** and **security metrics** dynamically.  
-✅ **Security Monitoring**: Detect **failed logins, MFA usage, and high-risk sign-ins** instantly.  
-✅ **Performance Optimization**: Monitor **CPU, Memory, and Network Latency** for better Azure VM performance.  
-✅ **Automated Refresh**: Power BI updates reports **without manual intervention**.  
-✅ **Role-Based Access**: Azure Entra ID ensures **secure access control** to dashboards.
+### **Key Benefits of This Setup**
+✅ **Real-time Monitoring**: Instantly detect **performance bottlenecks** and **security issues**.  
+✅ **Security & Compliance**: Tracks **Azure Entra ID authentication failures** and **policy violations**.  
+✅ **Operational Efficiency**: Identifies **under-utilized resources** to optimize cloud costs.  
+✅ **Automated Data Refresh**: Ensures dashboards always reflect the **latest system state**.  
+✅ **Drill-down Analytics**: Allows **IT teams** to investigate logs and take proactive actions.  
 
-This setup **empowers MES administrators** to **visualize and act on key Azure performance and security metrics**, improving **system health, security posture, and operational efficiency**. 🚀---
-
+This architecture **enhances visibility across MES systems**, ensuring **performance, security, and compliance monitoring is centralized within Power BI dashboards**. 🚀
 This setup **enhances MES system monitoring**, providing data-driven decisions on **infrastructure health** and **resource optimization**. 🚀 Let me know if you need more details!
 Here is a **detailed sequence diagram** illustrating how **Power BI is integrated into the MES Portal**, covering **authentication and authorization with Azure Entra ID, workspace access, printing and drill-down into reports, and scheduled auto-refresh**.
 
